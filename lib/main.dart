@@ -1,3 +1,4 @@
+import 'package:contactify/contacts.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -43,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool> getPermission() async {
-    return await FlutterContacts.requestPermission();
+    return await FlutterContacts.requestPermission(readonly: false);
   }
 
   void getContact() async {
@@ -62,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getContact();
   }
 
-  void _showAddContactDialog() {
+  void _showAddGroupDialog() {
     TextEditingController controllerName = TextEditingController();
     showDialog(context: context, builder: (BuildContext context) => AlertDialog(
       content: Column(
@@ -91,20 +92,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ListView.builder(
           itemCount: _groups!.length,
           itemBuilder: (BuildContext context, int index) {
+          Group group = _groups![index];
         return ListTile(
           title: Text(
-              _groups![index].name),
+              group.name),
           onTap: () {
-            print(num);
-            // if (contacts![index].phones.isNotEmpty) {
-            //   launch('tel: ${num}');
-            // }
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ContactsPage(group: group)),
+            );
           },
         );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddContactDialog,
-        tooltip: 'Increment',
+        onPressed: _showAddGroupDialog,
+        tooltip: 'add group',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

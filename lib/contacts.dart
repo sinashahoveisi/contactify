@@ -1,38 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+class ContactsPage extends StatefulWidget {
+  const ContactsPage({super.key, required this.group});
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  final Group group;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ContactsPage> createState() => _ContactsPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<Contact>? _contacts;
+class _ContactsPageState extends State<ContactsPage> {
+  List<Contact>? _allContacts = [];
+  List<Contact>? _contacts = [];
 
   @override
   void initState() {
@@ -41,23 +21,56 @@ class _MyHomePageState extends State<MyHomePage> {
     getContact();
   }
 
-  Future<bool> getPermission() async {
-    return await FlutterContacts.requestPermission();
-  }
-
   void getContact() async {
-    if (await getPermission()) {
-      List<Group> allGroups = await FlutterContacts.getGroups();
-      List<Contact> allContacts = await FlutterContacts.getContacts(
-          withProperties: true, withGroups: true);
-      print(allGroups);
-      setState(() {
-        _contacts = allContacts;
-      });
-    }
+    _allContacts = await FlutterContacts.getContacts(
+        withProperties: true, withAccounts: true, withPhoto: true, withGroups: true);
+    setState(() {
+      _contacts = _allContacts?.where((contact) => contact.groups.any((group) => group.id == widget.group.id)).toList();
+    });
   }
 
-  void _incrementCounter() {
+  void _showAddContactDialog() {
+    TextEditingController controllerName = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("add Contact to group"),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                StatefulBuilder(builder: (BuildContext context, StateSetter setState) =>
+                  ListView(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(8),
+                    children: _allContacts
+                    !.map(
+                          (Contact contact) => CheckboxListTile(
+                        title: Text("${contact.name.first} ${contact.name.last}"),
+                        value: _contacts?.any((c) => c.id == contact.id),
+                        onChanged: (bool? value) {
+                          bool isChecked = value ?? false;
+                          if(isChecked) {
+                            _contacts?.add(contact);
+                            contact.groups.add(widget.group);
+                          }
+                          else {
+                            _contacts?.remove(contact);
+                            contact.groups.remove(widget.group);
+                          }
+                          FlutterContacts.updateContact(contact, withGroups: true);
+                          setState(() {});
+                          this.setState(() {});
+                        },
+                      ),
+                    ).toList(),
+              ))
+              ],
+            ),
+          ),
+    ));
+
   }
 
   @override
@@ -65,9 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text("contacts of ${widget.group.name} group"),
       ),
-      body: _contacts == null ? const Center(child: CircularProgressIndicator()) :
+      body: _contacts!.isEmpty ? const Center(child: Text("Group is empty")) :
       ListView.builder(
           itemCount: _contacts!.length,
           itemBuilder: (BuildContext context, int index) {
@@ -85,10 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: _showAddContactDialog,
+        tooltip: 'add contact',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
