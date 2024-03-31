@@ -14,7 +14,13 @@ class MyApp extends StatelessWidget {
       title: 'contactify',
       theme: ThemeData(
         useMaterial3: true,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Theme.of(context).colorScheme.inversePrimary),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.cyanAccent,
+            background: Colors.white
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary
+        ),
         appBarTheme: AppBarTheme(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         )

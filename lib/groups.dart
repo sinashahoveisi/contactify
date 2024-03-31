@@ -74,6 +74,7 @@ class _GroupsPageState extends State<GroupsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("all Groups"),
+        centerTitle: true,
       ),
       body: _groups == null ? const Center(child: CircularProgressIndicator()) :
       ListView.builder(
@@ -96,8 +97,8 @@ class _GroupsPageState extends State<GroupsPage> {
             ],
           ),
             child: ListTile(
-              title: Text(
-                  group.name),
+              title: Text(group.name),
+              trailing: const Icon(Icons.arrow_forward_ios_outlined, size: 20,),
               onTap: () {
                 Navigator.push(
                   context,
