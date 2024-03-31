@@ -1,3 +1,4 @@
+import 'package:contactify/constants/contact.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
@@ -22,15 +23,17 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   void getContact() async {
-    _allContacts = await FlutterContacts.getContacts(
-        withProperties: true, withAccounts: true, withPhoto: true, withGroups: true);
+    _allContacts = await FlutterContacts.getContacts(withProperties: true, withAccounts: true, withPhoto: true, withGroups: true);
     setState(() {
-      _contacts = _allContacts?.where((contact) => contact.groups.any((group) => group.id == widget.group.id)).toList();
+      if(widget.group.id == allContactGroup.id) {
+        _contacts = _allContacts;
+      } else {
+        _contacts = _allContacts?.where((contact) => contact.groups.any((group) => group.id == widget.group.id)).toList();
+      }
     });
   }
 
   void _showAddContactDialog() {
-    TextEditingController controllerName = TextEditingController();
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -77,7 +80,6 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("contacts of ${widget.group.name} group"),
       ),
       body: _contacts!.isEmpty ? const Center(child: Text("Group is empty")) :
