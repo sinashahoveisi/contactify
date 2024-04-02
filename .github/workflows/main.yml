@@ -63,11 +63,12 @@ jobs:
       - name: Build release APK
         run: flutter build apk --release
 
-      - name: Upload APK to release
-        uses: actions/upload-artifact@v2
+      - name: Upload Android APK to release
+        uses: actions/upload-release-asset@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/app/outputs/flutter-apk/app-release.apk
-          tag: v1.1.0+1
-          overwrite: true
-          body: "release v1.1.0"
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/app-release.apk
+          asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
