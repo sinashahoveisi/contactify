@@ -38,9 +38,9 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/ios/iphoneos/FlutterIpaExport.ipa
-          tag: v1.1.0+1
+          tag: v1.1.1+3
           overwrite: true
-          body: "release v1.1.0"
+          body: "release v1.1.1"
 
   build-android:
     name: 🚀 Android Build
@@ -68,6 +68,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/app/outputs/flutter-apk/app-release.apk
-          tag: v1.1.0+1
+          tag: v1.1.1+3
           overwrite: true
-          body: "release v1.1.0"
+          body: "release v1.1.1"
