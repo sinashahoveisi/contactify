@@ -1,5 +1,5 @@
 import 'package:contactify/constants/contact.dart';
-import 'package:contactify/contacts.dart';
+import 'package:contactify/pages/contacts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:uuid/uuid.dart';

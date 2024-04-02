@@ -1,4 +1,4 @@
-import 'package:contactify/groups.dart';
+import 'package:contactify/pages/groups.dart';
 import 'package:flutter/material.dart';
 
 void main() {
